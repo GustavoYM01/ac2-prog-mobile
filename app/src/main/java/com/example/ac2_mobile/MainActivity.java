@@ -74,8 +74,10 @@ public class MainActivity extends AppCompatActivity {
                             etSenha.setText("");
                             textCallback.setText("");
                         }
-                        else
+                        else {
+                            textCallback.setText("");
                             Toast.makeText(MainActivity.this, "ERRO: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     });
         } else {
             Toast.makeText(MainActivity.this, "email e senha estão em branco!", Toast.LENGTH_LONG).show();

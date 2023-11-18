@@ -4,11 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ac2_mobile.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -45,23 +49,28 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         // Define os dados do item nos elementos de interface do ViewHolder.
         holder.nomeTextView.setText(item.getNome());
         holder.descricaoTextView.setText(item.getDescricao());
+
+        // Adiciona o evento OnClickListener ao botão de exclusão.
+        holder.btnDelete.setOnClickListener(v -> {
+            // Remove o item da lista.
+            itemList.remove(position);
+            // Remove o item do banco de dados.
+            DatabaseReference itensRef = FirebaseDatabase.getInstance().getReference("itens");
+            itensRef.child(String.valueOf(item.getNome())).removeValue();
+            notifyDataSetChanged();
+        });
     }
 
-    // Método chamado para determinar o número total de itens na lista.
     @Override
     public int getItemCount() {
         return itemList.size();
     }
 
-    // Classe interna que representa um ViewHolder.
-//    Um ViewHolder é usado para otimizar o desempenho da RecyclerView, evitando a necessidade
-//    de buscar elementos de interface repetidamente durante a rolagem. Em vez disso, os elementos
-//    de interface são vinculados ao ViewHolder uma única vez, durante a criação, e reutilizados
-//    para cada item exibido na lista, tornando a exibição mais eficiente.
     public class ItemViewHolder extends RecyclerView.ViewHolder {
         // Elementos de interface no layout do item.
         TextView nomeTextView;
         TextView descricaoTextView;
+        Button btnDelete;
 
         // Construtor do ViewHolder.
         public ItemViewHolder(@NonNull View itemView) {
@@ -70,6 +79,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             // Associa os elementos de interface às variáveis do ViewHolder.
             nomeTextView = itemView.findViewById(R.id.nomeTextView);
             descricaoTextView = itemView.findViewById(R.id.descricaoTextView);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }
